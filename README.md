@@ -8,5 +8,4 @@ a Typescript framework for fast and easy client side web app development that is
 
 Where used it? 
 ----
-* [Khesht](https://github.com/sajjad-shirazy/khest) a typescript client side development framework.
 * [openNZBT](https://github.com/sajjad-shirazy/openNZBT) a web based knowledge representation and reasoning engine.
