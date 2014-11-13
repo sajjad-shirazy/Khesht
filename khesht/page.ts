@@ -5,7 +5,6 @@ class Page extends EventDispatcher implements IPage {
     topMenu: TopMenu;
     div_container: JQuery;
     div_main: JQuery;
-    static icons: any = {};
     constructor() {
         super();
         B.body.empty();
@@ -13,7 +12,7 @@ class Page extends EventDispatcher implements IPage {
         this.header();
         this.main();
     }
-    header(brand: JQuery = B.a({ href: APP.getURL() }).append(APP.str('app.brand'), ' ', APP.config.version ? B.small().append(B.kbd(APP.config.version)) : null)): void {
+    header(brand: JQuery = B.a({ href: APP.getURL() }).append(APP.str('app.brand')/*, ' ', APP.config.version ? B.small().append(B.kbd(APP.config.version)) : null*/)): void {
         B.topmenusCount = 0;
         this.topMenu = new TopMenu(brand);
     }
@@ -29,6 +28,10 @@ class Page extends EventDispatcher implements IPage {
         this.footer();
         this.dispatchEvent('done');
         NProgress.done();
+    }
+    rtl() {
+        APP.attachStyle('css/bootstrap-rtl.min.css');
+        this.topMenu.ul_rightMenu.addClass('pull-left');
     }
     static input(control: JQuery, lable: string, desc?: string,lableWidth:number = 4): JQuery {
         return B.labeledControl(null, lable, desc, lableWidth, control);

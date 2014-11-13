@@ -1,9 +1,12 @@
-class APP implements IAPP{
+import EventDispatcher = require('khesht/eventdispatcher');
+
+class APP extends EventDispatcher implements IAPP{
     config: any;
     page: IPage;
     args: any = {};
     strings: any = {};
     constructor(config: any) {
+        super();
         this.config = config;
         document.title = this.config.name = this.config.name || 'khesht';
         this.log('starting ...');
@@ -11,7 +14,6 @@ class APP implements IAPP{
         this.attachStyle('bootstrap/css/bootstrap.min.css');
         NProgress.start();
         this.parsURL();
-        this.loadPage(this.args.page || config.index);
     }
     require(modulePath: string, success: Function, fail?: Function) {
         require.call(null, [modulePath], ((Class) => {
@@ -22,10 +24,11 @@ class APP implements IAPP{
                 if (fail) fail();
             }).bind(this));
     }
-    loadPage(name: string) {
-        name = name || this.config.page;
+    loadPage(name?: string) {
+        name = name || this.args.page || this.config.index;
         this.require(['pages/', name].join(''), (Page) => {
             this.page = new Page();
+            this.dispatchEvent('onpageload');
         }, () => { this.loadPage('notfound'); });
     }
     addStringPack(name: string):void {
@@ -91,7 +94,7 @@ class APP implements IAPP{
             }
             result = result[value];
         });
-        return result ? result : ['[', key, ']'].join('');  
+        return result != undefined ? result : ['[', key, ']'].join(''); 
     }
     public attachStyle(path): JQuery {
         path = require.toUrl(path);

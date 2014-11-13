@@ -15,7 +15,7 @@ define(["require", "exports", 'khesht/eventdispatcher', 'khesht/topmenu'], funct
             this.main();
         }
         Page.prototype.header = function (brand) {
-            if (typeof brand === "undefined") { brand = B.a({ href: APP.getURL() }).append(APP.str('app.brand'), ' ', APP.config.version ? B.small().append(B.kbd(APP.config.version)) : null); }
+            if (typeof brand === "undefined") { brand = B.a({ href: APP.getURL() }).append(APP.str('app.brand')); }
             B.topmenusCount = 0;
             this.topMenu = new TopMenu(brand);
         };
@@ -31,11 +31,14 @@ define(["require", "exports", 'khesht/eventdispatcher', 'khesht/topmenu'], funct
             this.dispatchEvent('done');
             NProgress.done();
         };
+        Page.prototype.rtl = function () {
+            APP.attachStyle('css/bootstrap-rtl.min.css');
+            this.topMenu.ul_rightMenu.addClass('pull-left');
+        };
         Page.input = function (control, lable, desc, lableWidth) {
             if (typeof lableWidth === "undefined") { lableWidth = 4; }
             return B.labeledControl(null, lable, desc, lableWidth, control);
         };
-        Page.icons = {};
         return Page;
     })(EventDispatcher);
     

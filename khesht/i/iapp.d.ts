@@ -10,5 +10,6 @@ interface IAPP {
     api(call: string, args: any, success: Function, options?: JQueryAjaxSettings): JQueryXHR;
     require(modulePath: string, success: Function, fail?: Function);
     loadingDOM(): JQuery;
+    attachStyle(path:string): JQuery;
 }
 declare var APP: IAPP; 

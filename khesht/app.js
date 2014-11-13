@@ -1,6 +1,14 @@
-define(["require", "exports"], function(require, exports) {
-    var APP = (function () {
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+define(["require", "exports", 'khesht/eventdispatcher'], function(require, exports, EventDispatcher) {
+    var APP = (function (_super) {
+        __extends(APP, _super);
         function APP(config) {
+            _super.call(this);
             this.args = {};
             this.strings = {};
             this.config = config;
@@ -10,7 +18,6 @@ define(["require", "exports"], function(require, exports) {
             this.attachStyle('bootstrap/css/bootstrap.min.css');
             NProgress.start();
             this.parsURL();
-            this.loadPage(this.args.page || config.index);
         }
         APP.prototype.require = function (modulePath, success, fail) {
             var _this = this;
@@ -25,9 +32,10 @@ define(["require", "exports"], function(require, exports) {
         };
         APP.prototype.loadPage = function (name) {
             var _this = this;
-            name = name || this.config.page;
+            name = name || this.args.page || this.config.index;
             this.require(['pages/', name].join(''), function (Page) {
                 _this.page = new Page();
+                _this.dispatchEvent('onpageload');
             }, function () {
                 _this.loadPage('notfound');
             });
@@ -103,7 +111,7 @@ define(["require", "exports"], function(require, exports) {
                 }
                 result = result[value];
             });
-            return result ? result : ['[', key, ']'].join('');
+            return result != undefined ? result : ['[', key, ']'].join('');
         };
         APP.prototype.attachStyle = function (path) {
             path = require.toUrl(path);
@@ -139,7 +147,7 @@ define(["require", "exports"], function(require, exports) {
             return B.center().append(B.img({ src: 'images/loading.gif' }));
         };
         return APP;
-    })();
+    })(EventDispatcher);
     
     return APP;
 });
