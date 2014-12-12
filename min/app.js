@@ -1,0 +1,1 @@
+define(["require","exports","nprogress/js/nprogress.min","stylesheet!nprogress/css/nprogress.min"],function(n){return function(){function t(i){t.config=i;document.title=t.config.name=t.config.name||"khesht";NProgress.start();n.call(null,["khesht/page"],function(n){n.load()})}return t}()})
