@@ -4,44 +4,71 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'khesht/eventdispatcher', 'khesht/topmenu'], function(require, exports, EventDispatcher, TopMenu) {
+define(["require", "exports", 'khesht/utils', 'khesht/dom', 'khesht/component'], function (require, exports, U, D, Base) {
     var Page = (function (_super) {
         __extends(Page, _super);
-        function Page() {
-            _super.call(this);
-            B.body.empty();
+        function Page(args) {
+            if (args === void 0) { args = {}; }
+            this.args = args;
+            _super.call(this, D.body.empty());
             NProgress.inc();
-            this.header();
-            this.main();
         }
-        Page.prototype.header = function (brand) {
-            if (typeof brand === "undefined") { brand = B.a({ href: APP.getURL() }).append(APP.str('app.brand')); }
-            B.topmenusCount = 0;
-            this.topMenu = new TopMenu(brand);
+        Page.load = function (args) {
+            var _this = this;
+            if (args === void 0) { args = U.parsURL(); }
+            NProgress.start();
+            if (U.isString(args)) {
+                args = { page: args };
+            }
+            args.page = args.page || 'index';
+            if (this.current) {
+                window.history.pushState(args, '', U.url(args));
+            }
+            if (!this.historyListener) {
+                $(window).on('popstate', function () {
+                    U.log(history.state);
+                    if (history.state && history.state.page) {
+                        _this.load(history.state);
+                    }
+                });
+                this.historyListener = true;
+            }
+            U.loadModule('pages/' + args.page, function (Page) {
+                _this.current = new Page(args);
+            }, function () {
+                if (args.page != 'notfound') {
+                    _this.load({ page: 'notfound' });
+                }
+            });
         };
-        Page.prototype.main = function () {
-            this.div_container = B.div().addClass('container').append(this.div_main = B.div()).appendTo(B.body);
+        Page.navigate = function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            Page.load(U.parsURL($(e.target).attr('href')));
+            return false;
         };
-        Page.prototype.footer = function (content) {
-            if (typeof content === "undefined") { content = APP.str('app.copyright'); }
-            B.body.append(B.div().addClass('container').append(B.br(), B.hr(), B.pageFooter().append(content)));
-        };
-        Page.prototype.finish = function () {
+        Page.prototype.start = function () {
+            _super.prototype.start.call(this);
+            this.header();
+            this.body();
             this.footer();
-            this.dispatchEvent('done');
             NProgress.done();
         };
-        Page.prototype.rtl = function () {
-            APP.attachStyle('css/bootstrap-rtl.min.css');
-            this.topMenu.ul_rightMenu.addClass('pull-left');
+        Page.prototype.header = function () {
         };
-        Page.input = function (control, lable, desc, lableWidth) {
-            if (typeof lableWidth === "undefined") { lableWidth = 4; }
-            return B.labeledControl(null, lable, desc, lableWidth, control);
+        Page.prototype.body = function () {
         };
+        Page.prototype.footer = function () {
+        };
+        Object.defineProperty(Page.prototype, "url", {
+            get: function () {
+                return U.url(this.args);
+            },
+            enumerable: true,
+            configurable: true
+        });
         return Page;
-    })(EventDispatcher);
-    
+    })(Base);
     return Page;
 });
 //# sourceMappingURL=page.js.map

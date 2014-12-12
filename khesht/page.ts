@@ -1,40 +1,65 @@
-import EventDispatcher = require('khesht/eventdispatcher');
-import TopMenu = require('khesht/topmenu');
+import U = require('khesht/utils');
+import D = require('khesht/dom');
+import Base = require('khesht/component');
 
-class Page extends EventDispatcher implements IPage {
-    topMenu: TopMenu;
-    div_container: JQuery;
-    div_main: JQuery;
-    constructor() {
-        super();
-        B.body.empty();
+class Page extends Base {
+    private static historyListener: boolean;
+    private static current: Page;
+    static load(args = U.parsURL()) {
+        NProgress.start();
+        if (U.isString(args)) {
+            args = { page: args };
+        }
+        args.page = args.page || 'index';
+        if (this.current) {
+            window.history.pushState(args, '', U.url(args));
+        }
+        if (!this.historyListener) {
+            $(window).on('popstate', () => {
+                U.log(history.state);
+                if (history.state && history.state.page) {
+                    this.load(history.state);
+                }
+            });
+            this.historyListener = true;
+        }
+        U.loadModule('pages/' + args.page,
+            (Page)=> {
+                this.current = new Page(args);
+            },
+            () => {
+                if (args.page != 'notfound') {
+                    this.load({ page: 'notfound' });
+                }
+            });
+    }
+    static navigate(e: Event) {
+        e.preventDefault();
+        e.stopPropagation();
+        Page.load(U.parsURL($(e.target).attr('href')));
+        return false;
+    }
+    args: any;
+    constructor(args: any = {}) {
+        this.args = args;
+        super(D.body.empty());
         NProgress.inc();
+    }
+    protected start() {
+        super.start();
         this.header();
-        this.main();
-    }
-    header(brand: JQuery = B.a({ href: APP.getURL() }).append(APP.str('app.brand')/*, ' ', APP.config.version ? B.small().append(B.kbd(APP.config.version)) : null*/)): void {
-        B.topmenusCount = 0;
-        this.topMenu = new TopMenu(brand);
-    }
-    main() {
-        this.div_container = B.div().addClass('container').append(
-            this.div_main = B.div()
-            ).appendTo(B.body);
-    }
-    footer(content: JQuery = <any>APP.str('app.copyright')): void {
-        B.body.append(B.div().addClass('container').append(B.br(), B.hr(), B.pageFooter().append(content)));
-    }
-    finish(): void {
+        this.body();
         this.footer();
-        this.dispatchEvent('done');
         NProgress.done();
     }
-    rtl() {
-        APP.attachStyle('css/bootstrap-rtl.min.css');
-        this.topMenu.ul_rightMenu.addClass('pull-left');
+    protected header() {
     }
-    static input(control: JQuery, lable: string, desc?: string,lableWidth:number = 4): JQuery {
-        return B.labeledControl(null, lable, desc, lableWidth, control);
+    protected body() {
+    }
+    protected footer() {
+    }
+    public get url(): string {
+        return U.url(this.args);
     }
 }
 export = Page;

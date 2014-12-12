@@ -1,4 +1,4 @@
-define(["require", "exports"], function(require, exports) {
+define(["require", "exports"], function (require, exports) {
     var TopMenu = (function () {
         function TopMenu(brand) {
             this.a_brand = null;
@@ -12,7 +12,6 @@ define(["require", "exports"], function(require, exports) {
         }
         return TopMenu;
     })();
-    
     return TopMenu;
 });
 //# sourceMappingURL=topmenu.js.map

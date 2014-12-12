@@ -1,12 +1,12 @@
-define(["require", "exports"], function(require, exports) {
+define(["require", "exports"], function (require, exports) {
     /**
-    * EventDispatcher (TypeScript)
-    * - Simple extendable event dispatching class
-    *
-    * @version 0.1.5
-    * @author John Vrbanac
-    * @license MIT License
-    **/
+     * EventDispatcher (TypeScript)
+     * - Simple extendable event dispatching class
+     *
+     * @version 0.1.5
+     * @author John Vrbanac
+     * @license MIT License
+     **/
     var Event = (function () {
         function Event(type, targetObj) {
             this._type = type;
@@ -15,7 +15,6 @@ define(["require", "exports"], function(require, exports) {
         Event.prototype.getTarget = function () {
             return this._target;
         };
-
         Event.prototype.getType = function () {
             return this._type;
         };
@@ -32,18 +31,14 @@ define(["require", "exports"], function(require, exports) {
                     exists = true;
                 }
             }
-
             return exists;
         };
-
         EventDispatcher.prototype.addEventListener = function (typeStr, listenerFunc) {
             if (this.hasEventListener(typeStr, listenerFunc)) {
                 return;
             }
-
             this._listeners.push({ type: typeStr, listener: listenerFunc });
         };
-
         EventDispatcher.prototype.removeEventListener = function (typeStr, listenerFunc) {
             for (var i = 0; i < this._listeners.length; i++) {
                 if (this._listeners[i].type === typeStr && this._listeners[i].listener === listenerFunc) {
@@ -61,7 +56,6 @@ define(["require", "exports"], function(require, exports) {
         };
         return EventDispatcher;
     })();
-    
     return EventDispatcher;
 });
 //# sourceMappingURL=eventdispatcher.js.map
