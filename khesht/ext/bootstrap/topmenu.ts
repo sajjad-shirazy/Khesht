@@ -7,7 +7,7 @@ class TopMenu extends Base {
     div_leftThings: JQuery = D.div();
     ul_rightMenu: JQuery = D.div();
     constructor(brand: JQuery) {
-        super();
+        super(null);
         this.brand = brand;
         this.dom = D.topmenu(
             this.brand,

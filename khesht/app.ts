@@ -1,5 +1,5 @@
-/// <amd-dependency path="nprogress/js/nprogress.min"/>
-/// <amd-dependency path="stylesheet!nprogress/css/nprogress.min"/>
+/// <amd-dependency path="nprogress/nprogress.min"/>
+/// <amd-dependency path="stylesheet!nprogress/nprogress.min"/>
 
 class Application {
     static config: any;

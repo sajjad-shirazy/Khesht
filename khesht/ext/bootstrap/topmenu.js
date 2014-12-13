@@ -8,7 +8,7 @@ define(["require", "exports", 'khesht/ext/bootstrap/dom', 'khesht/element'], fun
     var TopMenu = (function (_super) {
         __extends(TopMenu, _super);
         function TopMenu(brand) {
-            _super.call(this);
+            _super.call(this, null);
             this.brand = null;
             this.ul_leftMenu = D.div();
             this.div_leftThings = D.div();

@@ -1,6 +1,6 @@
-/// <amd-dependency path="nprogress/js/nprogress.min"/>
-/// <amd-dependency path="stylesheet!nprogress/css/nprogress.min"/>
-define(["require", "exports", "nprogress/js/nprogress.min", "stylesheet!nprogress/css/nprogress.min"], function (require, exports) {
+/// <amd-dependency path="nprogress/nprogress.min"/>
+/// <amd-dependency path="stylesheet!nprogress/nprogress.min"/>
+define(["require", "exports", "nprogress/nprogress.min", "stylesheet!nprogress/nprogress.min"], function (require, exports) {
     var Application = (function () {
         function Application(config) {
             Application.config = config;

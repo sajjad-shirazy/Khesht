@@ -229,11 +229,6 @@ define(["require", "exports", 'khesht/utils', "jquery"], function (require, expo
         DOM.fieldset = function (attr) {
             return this.dom('fieldset', attr);
         };
-        //-------------------------------------------------------
-        //-- components
-        DOM.loading = function () {
-            return this.center().append(this.img({ src: require.toUrl('images/loading.gif') }));
-        };
         DOM.head = $(document.head);
         DOM.body = $(document.body);
         /*
