@@ -53,7 +53,7 @@ define(["require", "exports", 'khesht/app', "jquery"], function (require, export
         */
         Utils.url = function (args) {
             if (args === void 0) { args = null; }
-            var dir = location['origin'] + location.pathname;
+            var dir = [window.location.protocol, '//', window.location.host, location.pathname].join('');
             return dir.slice(0, dir.lastIndexOf('/') + 1) + this.param(args);
         };
         Utils.log = function () {

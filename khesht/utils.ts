@@ -50,7 +50,7 @@ class Utils {
     * returns clean URL of current location
     */
     static url(args: any = null): string {
-        var dir = location['origin'] + location.pathname;
+        var dir = [window.location.protocol, '//', window.location.host, location.pathname].join('');
         return dir.slice(0, dir.lastIndexOf('/') + 1) + this.param(args);
     }
     static log(...args: any[]) {

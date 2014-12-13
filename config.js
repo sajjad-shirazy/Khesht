@@ -3,7 +3,7 @@
         name: 'Khesht',
         version: '1.1',
         waitSeconds: 120, //make sure it is enough to load all gmaps scripts
-        baseUrl: '//cdn.rawgit.com/sajjad-shirazy/Khesht/v1.0.3/',//change it to CDN url of your files
+        baseUrl: '//cdn.rawgit.com/sajjad-shirazy/Khesht/v1.0.4/',//change it to CDN url of your files
         paths: {
             requirejs: 	'//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min',
             stylesheet: '//cdnjs.cloudflare.com/ajax/libs/require-css/0.1.5/css.min',
@@ -13,7 +13,7 @@
             bootstrap: 	'//maxcdn.bootstrapcdn.com/bootstrap/3.3.1',
 			fileinput:	'//cdn.rawgit.com/kartik-v/bootstrap-fileinput/v3.0.0',
 			// ---
-            khesht: 	'//cdn.rawgit.com/sajjad-shirazy/Khesht/v1.0.3/khesht.min',
+            khesht: 	'//cdn.rawgit.com/sajjad-shirazy/Khesht/v1.0.4/khesht.min',
             pages: 		'pages.min',
             components: 'components.min',
             css: 		'css.min',
