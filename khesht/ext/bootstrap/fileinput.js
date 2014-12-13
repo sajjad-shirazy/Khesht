@@ -1,12 +1,12 @@
-/// <amd-dependency path="fileinput/js/fileinput.min.js"/>
-/// <amd-dependency path="stylesheet!fileinput/css/fileinput.min.css"/>
+/// <amd-dependency path="fileinput/js/fileinput.min"/>
+/// <amd-dependency path="stylesheet!fileinput/css/fileinput.min"/>
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'khesht/ext/bootstrap/dom', 'khesht/element', "fileinput/js/fileinput.min.js", "stylesheet!fileinput/css/fileinput.min.css"], function (require, exports, D, Base) {
+define(["require", "exports", 'khesht/ext/bootstrap/dom', 'khesht/element', "fileinput/js/fileinput.min", "stylesheet!fileinput/css/fileinput.min"], function (require, exports, D, Base) {
     var FileInput = (function (_super) {
         __extends(FileInput, _super);
         function FileInput(options) {
