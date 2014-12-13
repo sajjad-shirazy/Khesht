@@ -1,5 +1,5 @@
-﻿/// <amd-dependency path="js/fileinput.min.js"/>
-/// <amd-dependency path="stylesheet!css/fileinput.min.css"/>
+﻿/// <amd-dependency path="fileinput/js/fileinput.min.js"/>
+/// <amd-dependency path="stylesheet!fileinput/css/fileinput.min.css"/>
 
 import D = require('khesht/ext/bootstrap/dom');
 import Base = require('khesht/element');

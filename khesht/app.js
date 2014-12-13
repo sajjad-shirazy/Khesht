@@ -3,9 +3,10 @@
 define(["require", "exports", "nprogress/nprogress.min", "stylesheet!nprogress/nprogress.min"], function (require, exports) {
     var Application = (function () {
         function Application(config) {
+            window['NProgress'] = require('nprogress/nprogress.min');
+            NProgress.start();
             Application.config = config;
             document.title = Application.config.name = Application.config.name || 'khesht';
-            NProgress.start();
             require.call(null, ['khesht/page'], function (Page) {
                 Page.load();
             });

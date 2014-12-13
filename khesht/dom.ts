@@ -228,5 +228,10 @@ class DOM {
     static fieldset(attr?): JQuery {
         return this.dom('fieldset', attr);
     }
+    //-------------------------------------------------------
+    //-- components
+    static loading(): JQuery {
+        return this.center().append(this.img({ src: require.toUrl('images/loading.gif') }));
+    }
 }
 export = DOM;

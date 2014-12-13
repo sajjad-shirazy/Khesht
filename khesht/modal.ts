@@ -1,3 +1,5 @@
+import D = require('khesht/ext/bootstrap/dom');
+import U = require('khesht/utils');
 import EventDispatcher = require('khesht/eventdispatcher');
 
 class Modal extends EventDispatcher {
@@ -17,13 +19,13 @@ class Modal extends EventDispatcher {
             icon: 'flag',
             title: '.titile',
             showCloseBotton: true,
-            id: D.uniqueId(),
+            id: U.uniqueId(),
             size: ''
         }, options);
         this.modal = D.modal(
             this.options.size,
             D.modal['header'](this.options.icon, this.options.title, this.options.showCloseBotton), //Header
-            [//Body
+            <any>[//Body
                 this.form = D.form().addClass('form-horizontal').append(body),
                 D.hr().css({ 'margin-top': 'inherit', 'margin-bottom': 'inherit' }),
                 this.div_message = D.div()
@@ -48,7 +50,7 @@ class Modal extends EventDispatcher {
         return D.a({ 'data-toggle': 'modal', 'data-target': '#' + this.options.id }, this.options.icon).append(' ', this.options.title);
     }
     input(control: JQuery, lable: string,desc?:string): JQuery {
-        return D.labeledControl(null, lable, desc, 4, control);
+        return D.labeledControl(control, lable, desc, 4);
     }
     message(what: string, type: string = 'info') {
         D.alert('phone-alt').addClass('alert-' + type).append(what).appendTo(this.div_message);

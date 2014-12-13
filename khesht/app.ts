@@ -4,9 +4,10 @@
 class Application {
     static config: any;
     constructor(config: any) {
+        window['NProgress'] = require('nprogress/nprogress.min');
+        NProgress.start();
         Application.config = config;
         document.title = Application.config.name = Application.config.name || 'khesht';
-        NProgress.start();
         require.call(null, ['khesht/page'], function (Page) {
             Page.load();
         });

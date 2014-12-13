@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'khesht/eventdispatcher'], function (require, exports, EventDispatcher) {
+define(["require", "exports", 'khesht/ext/bootstrap/dom', 'khesht/utils', 'khesht/eventdispatcher'], function (require, exports, D, U, EventDispatcher) {
     var Modal = (function (_super) {
         __extends(Modal, _super);
         function Modal(body, footer, options) {
@@ -15,7 +15,7 @@ define(["require", "exports", 'khesht/eventdispatcher'], function (require, expo
                 icon: 'flag',
                 title: '.titile',
                 showCloseBotton: true,
-                id: D.uniqueId(),
+                id: U.uniqueId(),
                 size: ''
             }, options);
             this.modal = D.modal(this.options.size, D.modal['header'](this.options.icon, this.options.title, this.options.showCloseBotton), [
@@ -38,7 +38,7 @@ define(["require", "exports", 'khesht/eventdispatcher'], function (require, expo
             return D.a({ 'data-toggle': 'modal', 'data-target': '#' + this.options.id }, this.options.icon).append(' ', this.options.title);
         };
         Modal.prototype.input = function (control, lable, desc) {
-            return D.labeledControl(null, lable, desc, 4, control);
+            return D.labeledControl(control, lable, desc, 4);
         };
         Modal.prototype.message = function (what, type) {
             if (type === void 0) { type = 'info'; }
