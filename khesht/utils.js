@@ -12,8 +12,22 @@ define(["require", "exports", 'khesht/app', "jquery"], function (require, export
         Utils.uniqueId = function () {
             return (Utils.UID++).toString(36);
         };
-        Utils.formatMoney = function (value) {
-            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        Utils.appendStringPack = function (name, lang) {
+            var _this = this;
+            this.getJSON(['str/', name, '_', lang, '.json'].join(''), null, function (json) {
+                $.extend(_this.strings, json);
+                _this.log('string pack loaded:', name);
+            }, { async: false });
+        };
+        Utils.str = function (key) {
+            var result = this.strings;
+            $(key.split('.')).each(function (index, value) {
+                if (!result) {
+                    return;
+                }
+                result = result[value];
+            });
+            return result ? result : ['[', key, ']'].join('');
         };
         /*
         * it's like JQuery each but also works if given array is null
@@ -36,9 +50,9 @@ define(["require", "exports", 'khesht/app', "jquery"], function (require, export
         /*
         * creates an object with URL parameters values
         */
-        Utils.parsURL = function (params) {
-            if (params === void 0) { params = location.search; }
-            var pairs = params.replace(/^\?/, '').split(/&/);
+        Utils.parsURL = function (url) {
+            if (url === void 0) { url = location.search; }
+            var pairs = url.slice(url.lastIndexOf('?')).replace(/^\?/, '').split(/&/);
             var args = {};
             this.each(pairs, function (index, pair) {
                 if (pair.length > 0) {
@@ -51,10 +65,11 @@ define(["require", "exports", 'khesht/app', "jquery"], function (require, export
         /*
         * returns clean URL of current location
         */
-        Utils.url = function (args) {
+        Utils.url = function (args, path) {
             if (args === void 0) { args = null; }
+            if (path === void 0) { path = '/'; }
             var dir = [window.location.protocol, '//', window.location.host, location.pathname].join('');
-            return dir.slice(0, dir.lastIndexOf('/') + 1) + this.param(args);
+            return dir.slice(0, dir.lastIndexOf('/')) + path + this.param(args);
         };
         Utils.log = function () {
             var args = [];
@@ -194,6 +209,7 @@ define(["require", "exports", 'khesht/app', "jquery"], function (require, export
                     fail();
             });
         };
+        Utils.strings = {};
         Utils.UID = Date.now();
         return Utils;
     })();

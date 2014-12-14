@@ -4,7 +4,7 @@ import Base = require('khesht/component');
 
 class Page extends Base {
     private static historyListener: boolean;
-    private static current: Page;
+    public static current: Page;
     static load(args = U.parsURL()) {
         NProgress.start();
         if (U.isString(args)) {

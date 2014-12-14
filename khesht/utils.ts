@@ -3,6 +3,7 @@
 import APP = require('khesht/app');
 
 class Utils {
+    private static strings = {};
     private static UID = Date.now();
     static isString(value: any): boolean {
         return $.type(value) === "string";
@@ -13,8 +14,21 @@ class Utils {
     static uniqueId(): string {
         return (Utils.UID++).toString(36);
     }
-    static formatMoney(value:number): string {
-        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    static appendStringPack(name, lang):void {
+        this.getJSON(['str/', name, '_', lang, '.json'].join(''), null, (json) => {
+            $.extend(this.strings, json);
+            this.log('string pack loaded:', name);
+        }, { async: false });
+    }
+    static str(key):string {
+        var result:any = this.strings;
+        $(key.split('.')).each(function (index, value) {
+            if (!result) {
+                return;
+            }
+            result = result[<any>value];
+        });
+        return result ? result : ['[', key, ']'].join('');
     }
     /*
     * it's like JQuery each but also works if given array is null
@@ -35,8 +49,8 @@ class Utils {
     /*
     * creates an object with URL parameters values 
     */
-    static parsURL(params:string = location.search): any {
-        var pairs = params.replace(/^\?/, '').split(/&/);
+    static parsURL(url:string = location.search): any {
+        var pairs = url.slice(url.lastIndexOf('?')).replace(/^\?/, '').split(/&/);
         var args = {};
         this.each(pairs, function (index, pair) {
             if ((<string>pair).length > 0) {
@@ -49,9 +63,9 @@ class Utils {
     /*
     * returns clean URL of current location
     */
-    static url(args: any = null): string {
+    static url(args: any = null, path: string = '/'): string {
         var dir = [window.location.protocol, '//', window.location.host, location.pathname].join('');
-        return dir.slice(0, dir.lastIndexOf('/') + 1) + this.param(args);
+        return dir.slice(0, dir.lastIndexOf('/')) + path + this.param(args);
     }
     static log(...args: any[]) {
         args = Array.prototype.slice.call(args);

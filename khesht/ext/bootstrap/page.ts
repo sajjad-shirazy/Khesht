@@ -9,8 +9,8 @@ import TopMenu = require('khesht/ext/bootstrap/topmenu');
 import Form = require('khesht/ext/bootstrap/form');
 
 class Page extends Base {
+    public topMenu: TopMenu;
     protected form: Form;
-    protected topMenu: TopMenu;
     protected div_messages: JQuery;
     constructor(args:any) {
         super(args);

@@ -116,7 +116,7 @@ class DOM extends Base {
             ]
             );
     }
-    static panel(header: JQuery, body: JQuery, footer?: JQuery): JQuery {
+    static panel(header: any, body: any, footer?: any): JQuery {
         return this.div().addClass('panel').append(header ? this.div().addClass('panel-heading').append(header) : null, this.div().addClass('panel-body').append(body), footer ? this.div().addClass('panel-footer').append(footer) : null);
     }
     static alert(icon?: string): JQuery {
@@ -197,8 +197,8 @@ class DOM extends Base {
     static tab(items, attr?): JQuery {
         var tabs: JQuery = this.ul(null, $.extend({ role: 'tablist' }, attr)).addClass('nav nav-tabs'),
             contents = this.div().addClass('tab-content');
-        U.each(items, function (index, item) {
-            var id = this.uniqueId();
+        U.each(items, (index, item) => {
+            var id = U.uniqueId();
             tabs.append(this.li().append(this.a({ href: '#' + id, 'data-toggle': 'tab' }).append(item[0])));
             contents.append(this.div({ id: id }).addClass('tab-pane').append(item[1]));
         });

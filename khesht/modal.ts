@@ -24,7 +24,7 @@ class Modal extends EventDispatcher {
         }, options);
         this.modal = D.modal(
             this.options.size,
-            D.modal['header'](this.options.icon, this.options.title, this.options.showCloseBotton), //Header
+            D.modalHeader(this.options.icon, this.options.title, this.options.showCloseBotton), //Header
             <any>[//Body
                 this.form = D.form().addClass('form-horizontal').append(body),
                 D.hr().css({ 'margin-top': 'inherit', 'margin-bottom': 'inherit' }),

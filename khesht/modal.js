@@ -18,7 +18,7 @@ define(["require", "exports", 'khesht/ext/bootstrap/dom', 'khesht/utils', 'khesh
                 id: U.uniqueId(),
                 size: ''
             }, options);
-            this.modal = D.modal(this.options.size, D.modal['header'](this.options.icon, this.options.title, this.options.showCloseBotton), [
+            this.modal = D.modal(this.options.size, D.modalHeader(this.options.icon, this.options.title, this.options.showCloseBotton), [
                 this.form = D.form().addClass('form-horizontal').append(body),
                 D.hr().css({ 'margin-top': 'inherit', 'margin-bottom': 'inherit' }),
                 this.div_message = D.div()

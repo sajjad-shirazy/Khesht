@@ -183,11 +183,12 @@ define(["require", "exports", 'khesht/utils', 'khesht/dom'], function (require, 
         * items : [[title,content], [title,content],...]
         */
         DOM.tab = function (items, attr) {
+            var _this = this;
             var tabs = this.ul(null, $.extend({ role: 'tablist' }, attr)).addClass('nav nav-tabs'), contents = this.div().addClass('tab-content');
             U.each(items, function (index, item) {
-                var id = this.uniqueId();
-                tabs.append(this.li().append(this.a({ href: '#' + id, 'data-toggle': 'tab' }).append(item[0])));
-                contents.append(this.div({ id: id }).addClass('tab-pane').append(item[1]));
+                var id = U.uniqueId();
+                tabs.append(_this.li().append(_this.a({ href: '#' + id, 'data-toggle': 'tab' }).append(item[0])));
+                contents.append(_this.div({ id: id }).addClass('tab-pane').append(item[1]));
             });
             tabs.children().first().addClass('active');
             contents.children().first().addClass('active');
