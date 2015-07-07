@@ -7,11 +7,12 @@ var __extends = this.__extends || function (d, b) {
 define(["require", "exports", 'khesht/utils', 'khesht/dom', 'khesht/component'], function (require, exports, U, D, Base) {
     var Page = (function (_super) {
         __extends(Page, _super);
-        function Page(args) {
+        function Page(args, dom) {
             if (args === void 0) { args = {}; }
+            if (dom === void 0) { dom = D.body.empty(); }
             this.args = args;
-            _super.call(this, D.body.empty());
             NProgress.inc();
+            _super.call(this, dom);
         }
         Page.load = function (args) {
             var _this = this;
@@ -22,10 +23,10 @@ define(["require", "exports", 'khesht/utils', 'khesht/dom', 'khesht/component'],
             }
             args.page = args.page || 'index';
             if (this.current) {
-                window.history.pushState(args, '', U.url(args));
+                window.history.pushState(args, '', U.baseURL(args));
             }
             if (!this.historyListener) {
-                $(window).on('popstate', function () {
+                jQuery(window).on('popstate', function () {
                     U.log(history.state);
                     if (history.state && history.state.page) {
                         _this.load(history.state);
@@ -33,8 +34,8 @@ define(["require", "exports", 'khesht/utils', 'khesht/dom', 'khesht/component'],
                 });
                 this.historyListener = true;
             }
-            U.loadModule('pages/' + args.page, function (Page) {
-                _this.current = new Page(args);
+            U.loadModule('pages/' + args.page, function (Class) {
+                Page.current = new Class(args);
             }, function () {
                 if (args.page != 'notfound') {
                     _this.load({ page: 'notfound' });
@@ -44,7 +45,7 @@ define(["require", "exports", 'khesht/utils', 'khesht/dom', 'khesht/component'],
         Page.navigate = function (e) {
             e.preventDefault();
             e.stopPropagation();
-            Page.load(U.parsURL($(e.target).attr('href')));
+            Page.load(U.parsURL(jQuery(e.target).attr('href')));
             return false;
         };
         Page.prototype.start = function () {
@@ -62,7 +63,7 @@ define(["require", "exports", 'khesht/utils', 'khesht/dom', 'khesht/component'],
         };
         Object.defineProperty(Page.prototype, "url", {
             get: function () {
-                return U.url(this.args);
+                return U.baseURL(this.args);
             },
             enumerable: true,
             configurable: true

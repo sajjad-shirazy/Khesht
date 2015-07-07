@@ -1,5 +1,7 @@
 /// <amd-dependency path="jquery"/>
-define(["require", "exports", 'khesht/app', "jquery"], function (require, exports, APP) {
+/// <amd-dependency path="jquery.form"/>
+define(["require", "exports", 'khesht/app', "jquery", "jquery.form"], function (require, exports, APP) {
+    var $ = require("jquery");
     var Utils = (function () {
         function Utils() {
         }
@@ -12,22 +14,27 @@ define(["require", "exports", 'khesht/app', "jquery"], function (require, export
         Utils.uniqueId = function () {
             return (Utils.UID++).toString(36);
         };
+        Utils.appendString = function (data) {
+            $.extend(this.strings, data);
+        };
         Utils.appendStringPack = function (name, lang) {
             var _this = this;
             this.getJSON(['str/', name, '_', lang, '.json'].join(''), null, function (json) {
                 $.extend(_this.strings, json);
                 _this.log('string pack loaded:', name);
-            }, { async: false });
+            }, null, { async: false });
         };
         Utils.str = function (key) {
+            if (!key)
+                return null;
             var result = this.strings;
-            $(key.split('.')).each(function (index, value) {
+            jQuery(key.split('.')).each(function (index, value) {
                 if (!result) {
                     return;
                 }
                 result = result[value];
             });
-            return result ? result : ['[', key, ']'].join('');
+            return result ? result.trim() : ['[', key, ']'].join('');
         };
         /*
         * it's like JQuery each but also works if given array is null
@@ -62,14 +69,21 @@ define(["require", "exports", 'khesht/app', "jquery"], function (require, export
             });
             return args;
         };
+        Object.defineProperty(Utils, "url", {
+            get: function () {
+                return [window.location.protocol, '//', window.location.host, location.pathname].join('');
+            },
+            enumerable: true,
+            configurable: true
+        });
         /*
         * returns clean URL of current location
         */
-        Utils.url = function (args, path) {
+        Utils.baseURL = function (args, path) {
             if (args === void 0) { args = null; }
             if (path === void 0) { path = '/'; }
-            var dir = [window.location.protocol, '//', window.location.host, location.pathname].join('');
-            return dir.slice(0, dir.lastIndexOf('/')) + path + this.param(args);
+            var url = this.url;
+            return url.slice(0, url.lastIndexOf('/')) + path + this.param(args);
         };
         Utils.log = function () {
             var args = [];
@@ -86,17 +100,12 @@ define(["require", "exports", 'khesht/app', "jquery"], function (require, export
         /*
         * create an ajax request
         * - fails automaticly will handel
-        * - paths automaticly match with requireJS configs
         */
-        Utils.ajax = function (path, data, success, options) {
+        Utils.ajax = function (options) {
             if (options === void 0) { options = {}; }
-            $.extend(options, {
-                data: data,
-                url: require.toUrl(path),
-                success: success,
-                error: this.error.bind(this)
-            });
-            return $.ajax(options);
+            var output = $.ajax(options);
+            output.fail(this.error.bind(this));
+            return output;
         };
         /*
         * starts a set of ajax requests and calss success when all of them fetched
@@ -131,67 +140,56 @@ define(["require", "exports", 'khesht/app', "jquery"], function (require, export
         /*
         * create an ajax JSON request
         * - fails automaticly will handel
-        * - paths automaticly match with requireJS configs
+        * - you can send a form jQuery element as data but getJSON will return null instead of JQueryXHR
         */
-        Utils.getJSON = function (path, data, success, options) {
+        Utils.getJSON = function (url, data, success, fail, options) {
+            var _this = this;
+            if (data === void 0) { data = null; }
             if (options === void 0) { options = {}; }
-            $.extend(options, {
-                dataType: 'json'
-            });
-            return this.ajax(path, data, success, options);
+            options = $.extend({
+                dataType: 'json',
+                url: url,
+                data: data,
+                success: function (json) {
+                    var error = json ? json.error : null;
+                    if (error) {
+                        if (fail) {
+                            fail(error);
+                        }
+                        _this.error(error, 'server error');
+                    }
+                    else if (success) {
+                        _this.log('server call returned:', json);
+                        success(json);
+                    }
+                },
+                error: fail
+            }, options);
+            if (data instanceof jQuery) {
+                delete options.data;
+                data.prop('tagName') == 'FORM' && data.ajaxSubmit(options);
+                return null;
+            }
+            else {
+                return this.ajax(options);
+            }
+        };
+        Utils.apiURL = function (call, args) {
+            if (args === void 0) { args = null; }
+            args = args || {};
+            args.call = call;
+            return $.param(args);
         };
         /*
         * calls a KAPI api request
         * - fails automaticly will handel
-        * - if you set a callback on `argsfail` on options you can trace args errors
         */
-        Utils.api = function (call, args, success, options) {
-            var _this = this;
-            if (args === void 0) { args = {}; }
+        Utils.api = function (call, args, success, fail, options) {
+            if (args === void 0) { args = null; }
             if (options === void 0) { options = {}; }
             args = args || {};
-            if (args instanceof FormData) {
-                args.append('call', call);
-            }
-            else {
-                $.extend(args, {
-                    call: call
-                });
-            }
-            //validating inputs
-            if (options['argsfail']) {
-                var fails = new Array();
-                this.each(args, function (i, value) {
-                    switch (typeof value) {
-                        case 'string':
-                            if (value == '')
-                                fails.push(i);
-                            break;
-                        case 'number':
-                        case 'boolean':
-                            break;
-                        default:
-                            fails.push(i);
-                    }
-                });
-                if (fails.length > 0) {
-                    options['argsfail'](fails);
-                    return;
-                }
-            }
-            return this.getJSON('api/', args, function (json) {
-                var error = json ? json.error : null;
-                if (error) {
-                    _this.error(error, 'api "' + call + '" call failed');
-                    if (options['onerror']) {
-                        options['onerror'](error);
-                    }
-                }
-                else if (success) {
-                    _this.log('api "', call, '" call returned:', json);
-                    success(json);
-                }
-            }, options);
+            args.call = call;
+            return this.getJSON(require.toUrl('api/'), args, success, fail, options);
         };
         /*
         * loads a requireJS module

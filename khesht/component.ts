@@ -2,6 +2,8 @@
 import D = require('khesht/dom');
 import Element = require('khesht/element');
 
+var $ = require("jquery");
+
 class Component extends Element {
     protected ajaxes(): any {
         return {};
@@ -17,20 +19,24 @@ class Component extends Element {
         }
     }
     load() {
+        var done = () => {
+            this.loaded = true;
+            this.triger('load');
+            this.start();
+        }
         if (!this.loaded) {
             //loading ajax datas
             U.when(this.ajaxes(),
                 (result) => {
                     $.extend(this, result);
-                    this.start();
+                    done();
                 }, () => {
                     this.start();
+                    done();
                 });
         }
     }
     protected start() {
-        this.loaded = true;
-        this.dispatchEvent('load');
     }
     get DOM(): JQuery {
         return this.dom;

@@ -1,8 +1,13 @@
 /// <amd-dependency path="jquery"/>
 define(["require", "exports", 'khesht/utils', "jquery"], function (require, exports, U) {
+    var $ = require("jquery");
     var DOM = (function () {
         function DOM() {
         }
+        DOM.scrollTo = function (dom, duration) {
+            if (duration === void 0) { duration = 'slow'; }
+            return dom.animate({ scrollTop: 0 }, duration);
+        };
         DOM.enable = function (dom) {
             return dom ? dom.removeAttr('disabled') : null;
         };
@@ -10,7 +15,7 @@ define(["require", "exports", 'khesht/utils', "jquery"], function (require, expo
             return dom ? dom.attr('disabled', 'disabled') : null;
         };
         DOM.dom = function (name, attr) {
-            var dom = $(document.createElement(name));
+            var dom = jQuery(document.createElement(name));
             if (attr)
                 dom.attr(attr);
             return dom;
@@ -44,6 +49,10 @@ define(["require", "exports", 'khesht/utils', "jquery"], function (require, expo
                 U.error(err.requireModules && err.requireModules[0], 'loading scripts failed');
             });
         };
+        DOM.space = function (count) {
+            if (count === void 0) { count = 1; }
+            return (new Array(count + 1)).join('&nbsp;');
+        };
         DOM.p = function (attr) {
             return this.dom('p', attr);
         };
@@ -70,6 +79,9 @@ define(["require", "exports", 'khesht/utils', "jquery"], function (require, expo
         };
         DOM.h6 = function (attr) {
             return this.dom('h6', attr);
+        };
+        DOM.abbr = function (attr) {
+            return this.dom('abbr', attr);
         };
         DOM.small = function (attr) {
             return this.dom('small', attr);
@@ -112,7 +124,7 @@ define(["require", "exports", 'khesht/utils', "jquery"], function (require, expo
             if (items && items instanceof Array) {
                 U.each(items, function (index, item) {
                     if (item) {
-                        if (item instanceof String || item instanceof Array || !item.is('li'))
+                        if (U.isString(item) || item instanceof Array || !item.is('li'))
                             item = _this.dom('li').append(item);
                         ul.append(item);
                     }
@@ -234,8 +246,11 @@ define(["require", "exports", 'khesht/utils', "jquery"], function (require, expo
         DOM.loading = function () {
             return this.center().append(this.img({ src: require.toUrl('images/loading.gif') }));
         };
-        DOM.head = $(document.head);
-        DOM.body = $(document.body);
+        DOM.emptyDiv = function (attr) {
+            return this.div(attr).append(this.center().append(this.em().append('Empty'))).css('font-weight', 'normal');
+        };
+        DOM.head = jQuery(document.head);
+        DOM.body = jQuery(document.body);
         /*
         * - stylesheet automaticly appends to head
         * - paths automaticly match with requireJS configs

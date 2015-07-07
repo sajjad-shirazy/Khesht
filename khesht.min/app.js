@@ -1,1 +1,0 @@
-define(["require","exports","nprogress/nprogress.min","stylesheet!nprogress/nprogress.min"],function(n){return function(){function t(i){window.NProgress=n("nprogress/nprogress.min");NProgress.start();t.config=i;document.title=t.config.name=t.config.name||"khesht";n.call(null,["khesht/page"],function(n){n.load()})}return t}()})

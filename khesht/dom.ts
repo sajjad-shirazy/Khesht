@@ -2,10 +2,14 @@
 
 import U = require('khesht/utils');
 
+var $: JQueryStatic = require("jquery");
 
 class DOM {
-    static head: JQuery = $(document.head);
-    static body: JQuery = $(document.body);
+    static head: JQuery = jQuery(document.head);
+    static body: JQuery = jQuery(document.body);
+    static scrollTo(dom: JQuery, duration = 'slow'): JQuery {
+        return dom.animate({ scrollTop: 0 }, duration);
+    }
     static enable(dom: JQuery):JQuery {
         return dom ? dom.removeAttr('disabled') : null;
     }
@@ -13,7 +17,7 @@ class DOM {
         return dom ? dom.attr('disabled', 'disabled') : null;
     }
     static dom(name:string, attr?):JQuery {
-        var dom = $(document.createElement(name));
+        var dom = jQuery(document.createElement(name));
         if (attr) dom.attr(attr);
         return dom;
     }
@@ -51,6 +55,9 @@ class DOM {
                 U.error(err.requireModules && err.requireModules[0], 'loading scripts failed');
             });
     }
+    static space(count: number = 1): string {
+        return (new Array(count + 1)).join('&nbsp;');
+    }
     static p(attr?): JQuery {
         return this.dom('p', attr);
     }
@@ -78,6 +85,9 @@ class DOM {
     static h6(attr?): JQuery {
         return this.dom('h6', attr);
     }
+    static abbr(attr?): JQuery {
+        return this.dom('abbr', attr);
+    } 
     static small(attr?): JQuery {
         return this.dom('small', attr);
     }
@@ -115,7 +125,7 @@ class DOM {
         if (items && items instanceof Array) {
             U.each(items, (index, item) => {
                 if (item) {
-                    if (item instanceof String || item instanceof Array || !item.is('li'))
+                    if (U.isString(item) || item instanceof Array || !item.is('li'))
                         item = this.dom('li').append(item);
                     ul.append(item);
                 }
@@ -232,6 +242,9 @@ class DOM {
     //-- components
     static loading(): JQuery {
         return this.center().append(this.img({ src: require.toUrl('images/loading.gif') }));
+    }
+    static emptyDiv(attr?): JQuery {
+        return this.div(attr).append(this.center().append(this.em().append('Empty'))).css('font-weight', 'normal');
     }
 }
 export = DOM;

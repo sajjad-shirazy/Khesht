@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", 'khesht/eventdispatcher'], function (require, exports, EventDispatcher) {
+define(["require", "exports", 'khesht/dom', 'khesht/eventdispatcher'], function (require, exports, D, EventDispatcher) {
     var Element = (function (_super) {
         __extends(Element, _super);
         function Element(dom) {
@@ -18,6 +18,28 @@ define(["require", "exports", 'khesht/eventdispatcher'], function (require, expo
             enumerable: true,
             configurable: true
         });
+        Element.prototype.disable = function (name) {
+            D.disable(this[name]);
+        };
+        Element.prototype.enable = function (name) {
+            D.enable(this[name]);
+        };
+        Element.prototype.br = function (counts) {
+            if (counts === void 0) { counts = null; }
+            this.append(D.br(counts));
+        };
+        Element.prototype.hr = function () {
+            this.append(D.hr());
+        };
+        Element.prototype.get = function (propertyName) {
+            return this[propertyName];
+        };
+        Element.prototype.appendProperty = function (name, control) {
+            if (name)
+                this[name] = control;
+            this.append(control);
+            return control;
+        };
         Element.prototype.append = function () {
             var contents = [];
             for (var _i = 0; _i < arguments.length; _i++) {

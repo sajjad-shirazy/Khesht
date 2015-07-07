@@ -1,6 +1,8 @@
 ﻿/// <amd-dependency path="jquery"/>
+/// <amd-dependency path="jquery.form"/>
 
 import APP = require('khesht/app');
+var $:JQueryStatic = require("jquery");
 
 class Utils {
     private static strings = {};
@@ -14,21 +16,26 @@ class Utils {
     static uniqueId(): string {
         return (Utils.UID++).toString(36);
     }
-    static appendStringPack(name, lang):void {
+    static appendString(data): void {
+        $.extend(this.strings, data);
+    }
+    static appendStringPack(name, lang): void {
         this.getJSON(['str/', name, '_', lang, '.json'].join(''), null, (json) => {
             $.extend(this.strings, json);
             this.log('string pack loaded:', name);
-        }, { async: false });
+        }, null, { async: false });
     }
-    static str(key):string {
+    static str(key): string {
+        if (!key)
+            return null;
         var result:any = this.strings;
-        $(key.split('.')).each(function (index, value) {
+        jQuery(key.split('.')).each(function (index, value) {
             if (!result) {
                 return;
             }
             result = result[<any>value];
         });
-        return result ? result : ['[', key, ']'].join('');
+        return result ? result.trim() : ['[', key, ']'].join('');
     }
     /*
     * it's like JQuery each but also works if given array is null
@@ -60,12 +67,15 @@ class Utils {
         });
         return args;
     }
+    static get url(): string {
+        return [window.location.protocol, '//', window.location.host, location.pathname].join('');
+    }
     /*
     * returns clean URL of current location
     */
-    static url(args: any = null, path: string = '/'): string {
-        var dir = [window.location.protocol, '//', window.location.host, location.pathname].join('');
-        return dir.slice(0, dir.lastIndexOf('/')) + path + this.param(args);
+    static baseURL(args: any = null, path: string = '/'): string {
+        var url = this.url;
+        return url.slice(0, url.lastIndexOf('/')) + path + this.param(args);
     }
     static log(...args: any[]) {
         args = Array.prototype.slice.call(args);
@@ -78,16 +88,11 @@ class Utils {
     /*
     * create an ajax request
     * - fails automaticly will handel 
-    * - paths automaticly match with requireJS configs
     */
-    static ajax(path: string, data: any, success: Function, options: JQueryAjaxSettings = {}): JQueryXHR {
-        $.extend(options, {
-            data: data,
-            url: require.toUrl(path),
-            success: success,
-            error: this.error.bind(this)
-        });
-        return $.ajax(options);
+    static ajax(options: JQueryAjaxSettings = {}): JQueryXHR {
+        var output = $.ajax(options);
+        output.fail(this.error.bind(this));
+        return output;
     }
     /*
     * starts a set of ajax requests and calss success when all of them fetched
@@ -118,61 +123,48 @@ class Utils {
     /*
     * create an ajax JSON request
     * - fails automaticly will handel 
-    * - paths automaticly match with requireJS configs
+    * - you can send a form jQuery element as data but getJSON will return null instead of JQueryXHR
     */
-    static getJSON(path: string, data: any, success: Function, options: JQueryAjaxSettings = {}): JQueryXHR {
-        $.extend(options, {
-            dataType: 'json'
-        });
-        return this.ajax(path, data, success, options);
+    static getJSON(url: string, data: any = null, success?: (data: any) => void, fail?: (error: string) => void, options: JQueryAjaxSettings = {}): JQueryXHR {
+        options = $.extend({
+            dataType: 'json',
+            url: url,
+            data: data,
+            success: (json) => {
+                var error: any = json ? json.error : null;
+                if (error) {
+                    if (fail) {
+                        fail(error);
+                    }
+                    this.error(error, 'server error');
+                } else if (success) {
+                    this.log('server call returned:', json);
+                    success(json);
+                }
+            },
+            error: fail
+        }, options);
+        if (data instanceof jQuery) {
+            delete options.data;
+            data.prop('tagName') == 'FORM' && data.ajaxSubmit(options);
+            return null;
+        } else {
+            return this.ajax(options);
+        }
     }
-
+    static apiURL(call: string, args: any = null): string {
+        args = args || {};
+        args.call = call;
+        return $.param(args);
+    }
     /*
     * calls a KAPI api request
     * - fails automaticly will handel 
-    * - if you set a callback on `argsfail` on options you can trace args errors
     */
-    static api(call: string, args: any = {}, success?: (data: any) => void, options: JQueryAjaxSettings = {}): JQueryXHR {
+    static api(call: string, args: any = null, success?: (data: any) => void, fail?: (error: string) => {}, options: JQueryAjaxSettings = {}): JQueryXHR {
         args = args || {};
-        if (args instanceof FormData) {
-            (<FormData>args).append('call', call);
-        } else {
-            $.extend(args, {
-                call: call
-            });
-        }
-        //validating inputs
-        if (options['argsfail']) {
-            var fails = new Array();
-            this.each(args, (i, value) => {
-                switch (typeof value) {
-                    case 'string':
-                        if (value == '') fails.push(i);
-                        break;
-                    case 'number':
-                    case 'boolean':
-                        break;
-                    default:
-                        fails.push(i);
-                }
-            });
-            if (fails.length > 0) {
-                options['argsfail'](fails);
-                return;
-            }
-        }
-        return this.getJSON('api/', args, (json) => {
-            var error: any = json ? json.error : null;
-            if (error) {
-                this.error(error, 'api "' + call + '" call failed');
-                if (options['onerror']) {
-                    options['onerror'](error);
-                }
-            } else if (success) {
-                this.log('api "', call, '" call returned:', json);
-                success(json);
-            }
-        }, options);
+        args.call = call;
+        return this.getJSON(require.toUrl('api/'), args, success, fail, options);
     }
     /*
     * loads a requireJS module

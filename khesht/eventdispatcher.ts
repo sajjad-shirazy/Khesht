@@ -40,7 +40,7 @@ class EventDispatcher {
         return exists;
     }
 
-    public addEventListener(typeStr: string, listenerFunc: Function): void {
+    public on(typeStr: string, listenerFunc: Function): void {
         if (this.hasEventListener(typeStr, listenerFunc)) {
             return;
         }
@@ -55,7 +55,7 @@ class EventDispatcher {
             }
         }
     }
-    public dispatchEvent(type: string) {
+    public triger(type: string) {
         var evt: Event = new Event(type, this);
         for (var i = 0; i < this._listeners.length; i++) {
             if (this._listeners[i].type === evt.getType()) {

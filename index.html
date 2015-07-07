@@ -1,25 +1,21 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1.0">
-        <script type="text/javascript" src="config.js"></script>
-    </head>
-    <body>
-        <script type="text/javascript">
-            window.onload = function () {
-                var config = window.khesht.config,
-                    script = document.createElement('script');
-                document.getElementsByTagName('head')[0].appendChild(script);
-                script.type = 'text/javascript';
-                script.onload = function () {
-                    require.config(config);
-                    require(['khesht/app'], function (APP) {
-                        window.APP = new APP(config);
-                    });
-                }
-                script.src = config.paths.requirejs + '.js';
-            }
-        </script>
-    </body>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link type="text/css" href="css/all.css" rel="stylesheet">
+    <script type="text/javascript" src="3rd-party/3rd-party.js"></script>
+    <script type="text/javascript" src="config.js"></script>
+    <title></title>
+</head>
+<body onload="init();">
+    <script type="text/javascript">
+        function init() {
+            require.config(khesht.config);
+            require(['khesht/app'], function (APP) {
+                window.APP = new APP(khesht.config);
+            });
+        }
+    </script>
+</body>
 </html>

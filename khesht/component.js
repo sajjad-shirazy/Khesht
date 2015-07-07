@@ -5,6 +5,7 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 define(["require", "exports", 'khesht/utils', 'khesht/element'], function (require, exports, U, Element) {
+    var $ = require("jquery");
     var Component = (function (_super) {
         __extends(Component, _super);
         function Component(dom, autoLoad) {
@@ -27,19 +28,23 @@ define(["require", "exports", 'khesht/utils', 'khesht/element'], function (requi
         });
         Component.prototype.load = function () {
             var _this = this;
+            var done = function () {
+                _this.loaded = true;
+                _this.triger('load');
+                _this.start();
+            };
             if (!this.loaded) {
                 //loading ajax datas
                 U.when(this.ajaxes(), function (result) {
                     $.extend(_this, result);
-                    _this.start();
+                    done();
                 }, function () {
                     _this.start();
+                    done();
                 });
             }
         };
         Component.prototype.start = function () {
-            this.loaded = true;
-            this.dispatchEvent('load');
         };
         Object.defineProperty(Component.prototype, "DOM", {
             get: function () {

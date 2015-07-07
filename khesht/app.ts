@@ -1,15 +1,14 @@
-/// <amd-dependency path="nprogress/nprogress.min"/>
-/// <amd-dependency path="stylesheet!nprogress/nprogress.min"/>
-
+/// <amd-dependency path="requirejs"/>
+/// <amd-dependency path="nprogress"/>
 class Application {
     static config: any;
     constructor(config: any) {
-        window['NProgress'] = require('nprogress/nprogress.min');
+        window['NProgress'] = require('nprogress');
         NProgress.start();
         Application.config = config;
-        document.title = Application.config.name = Application.config.name || 'khesht';
+        //document.title = Application.config.name = Application.config.name || 'khesht';
         require.call(null, ['khesht/page'], function (Page) {
-            Page.load();
+            config.defaultPage ? Page.load(config.defaultPage) : Page.load();
         });
     }   
 }

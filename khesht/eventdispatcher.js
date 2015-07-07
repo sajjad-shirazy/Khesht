@@ -33,7 +33,7 @@ define(["require", "exports"], function (require, exports) {
             }
             return exists;
         };
-        EventDispatcher.prototype.addEventListener = function (typeStr, listenerFunc) {
+        EventDispatcher.prototype.on = function (typeStr, listenerFunc) {
             if (this.hasEventListener(typeStr, listenerFunc)) {
                 return;
             }
@@ -46,7 +46,7 @@ define(["require", "exports"], function (require, exports) {
                 }
             }
         };
-        EventDispatcher.prototype.dispatchEvent = function (type) {
+        EventDispatcher.prototype.triger = function (type) {
             var evt = new Event(type, this);
             for (var i = 0; i < this._listeners.length; i++) {
                 if (this._listeners[i].type === evt.getType()) {

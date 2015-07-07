@@ -12,10 +12,10 @@ class Page extends Base {
         }
         args.page = args.page || 'index';
         if (this.current) {
-            window.history.pushState(args, '', U.url(args));
+            window.history.pushState(args, '', U.baseURL(args));
         }
         if (!this.historyListener) {
-            $(window).on('popstate', () => {
+            jQuery(window).on('popstate', () => {
                 U.log(history.state);
                 if (history.state && history.state.page) {
                     this.load(history.state);
@@ -24,8 +24,8 @@ class Page extends Base {
             this.historyListener = true;
         }
         U.loadModule('pages/' + args.page,
-            (Page)=> {
-                this.current = new Page(args);
+            (Class)=> {
+                Page.current = new Class(args);
             },
             () => {
                 if (args.page != 'notfound') {
@@ -36,14 +36,14 @@ class Page extends Base {
     static navigate(e: Event) {
         e.preventDefault();
         e.stopPropagation();
-        Page.load(U.parsURL($(e.target).attr('href')));
+        Page.load(U.parsURL(jQuery(e.target).attr('href')));
         return false;
     }
     args: any;
-    constructor(args: any = {}) {
+    constructor(args: any = {}, dom: JQuery = D.body.empty()) {
         this.args = args;
-        super(D.body.empty());
         NProgress.inc();
+        super(dom);
     }
     protected start() {
         super.start();
@@ -59,7 +59,7 @@ class Page extends Base {
     protected footer() {
     }
     public get url(): string {
-        return U.url(this.args);
+        return U.baseURL(this.args);
     }
 }
 export = Page;
